@@ -1,5 +1,7 @@
 ## Blog
 
+- [Servo 的设计架构](https://github.com/anjia/blog/issues/3)
+- [Quantum 初探](https://github.com/anjia/blog/issues/2)
 - [不用预编译，CSS 直接写嵌套的日子就要到了](https://github.com/anjia/blog/issues/1)
 
 > [查看更多](https://github.com/anjia/blog/issues)，2018-至今
@@ -20,3 +22,7 @@
 - [PWA 技术揭秘](https://ppt.baomitu.com/d/569cf4e7#/1)
 - [前端组件化之 Angular](https://ppt.baomitu.com/d/b825c5a2)
 - [Mobile Debugging](https://ppt.baomitu.com/d/70c89f08)
+
+## 关于我
+
+我是安佳，360 搜索事业部的一名前端开发工程师，也是 W3C CSS 工作组的成员。
