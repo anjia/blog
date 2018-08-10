@@ -1,6 +1,6 @@
 ## Blog
 
-- [Servo 的设计架构](https://github.com/anjia/blog/issues/3)
+- [这款狗狗引擎这么快？一定是考虑了这几个特性](https://github.com/anjia/blog/issues/3)：Servo 的设计架构
 - [Quantum 初探](https://github.com/anjia/blog/issues/2)
 - [不用预编译，CSS 直接写嵌套的日子就要到了](https://github.com/anjia/blog/issues/1)
 
