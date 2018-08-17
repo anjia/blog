@@ -2,7 +2,7 @@
 
 - [Servo 的设计架构](https://github.com/anjia/blog/issues/3)
 - [Quantum 初探](https://github.com/anjia/blog/issues/2)
-- [不用预编译，CSS 直接写嵌套的日子就要到了](https://github.com/anjia/blog/issues/1)
+- [CSS 的原生嵌套](https://github.com/anjia/blog/issues/1)
 
 > [查看更多](https://github.com/anjia/blog/issues)，2018-至今
 
