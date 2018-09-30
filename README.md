@@ -1,6 +1,6 @@
 ## Blog
 
-- CSS 相关，[更多](https://github.com/anjia/blog/labels/css)
+- [CSS 相关](https://github.com/anjia/blog/labels/css)
     - [属性一览表](https://github.com/anjia/blog/issues/20)
     - [规范](https://github.com/anjia/blog/issues/17)
     - [规范术语](https://github.com/anjia/blog/issues/18)
