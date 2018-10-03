@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Paint API</title>
+<style>
+	div {
+		width: 250px; height: 200px;
+		border: 2px dotted #eaeaea;
+		resize: both; overflow: hidden;	
+	}
+	.css-paint {
+		--checkerboard-spacing: 10;
+		--checkerboard-size: 32;
+
+		background-image: linear-gradient(0, red, blue);
+		background-image: paint(checkerboard);
+	}
+</style>
+</head>
+<body>
+
+<div class="css-paint"></div>
+
+<script>
+	if(location.protocol==='http:' && location.hostname!=='localhost'){
+		location.protocol = 'https:';
+	}
+
+	if('paintWorklet' in CSS){
+		CSS.paintWorklet.addModule('my_paint_worklet.js'); // 核心代码
+	}else{
+		console.log('浏览器不支持 CSS Paint API');
+	}
+</script>
+</body>
+</html>
