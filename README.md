@@ -1,13 +1,15 @@
 ## Blog
 
-- [CSS 相关](https://github.com/anjia/blog/labels/css)
-    - [属性一览表](https://github.com/anjia/blog/issues/20)
+- [Spec 相关](https://github.com/anjia/blog/labels/spec)
     - [规范](https://github.com/anjia/blog/issues/17)
     - [规范术语](https://github.com/anjia/blog/issues/18)
-    - [W3C CSS 动态](https://github.com/anjia/blog/issues/19)
-- [Servo 的设计架构](https://github.com/anjia/blog/issues/3)
-- [Quantum 初探](https://github.com/anjia/blog/issues/2)
-- [CSS 的原生嵌套](https://github.com/anjia/blog/issues/1)
+    - [W3C & CSS 动态](https://github.com/anjia/blog/issues/19)
+- [CSS 相关](https://github.com/anjia/blog/labels/css)
+    - [CSS Painting API](https://github.com/anjia/blog/issues/21)
+    - [CSS 的原生嵌套](https://github.com/anjia/blog/issues/1)
+- [Quantum 相关](https://github.com/anjia/blog/labels/servo)
+    - [Servo 的设计架构](https://github.com/anjia/blog/issues/3)
+    - [Quantum 初探](https://github.com/anjia/blog/issues/2)
 
 > [查看更多](https://github.com/anjia/blog/issues)，2018-至今
 
