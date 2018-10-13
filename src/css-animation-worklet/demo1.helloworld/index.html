@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Animation Worklet 之 HelloWorld</title>
+  <style>
+    div {
+      width: 100px; height: 100px; margin-bottom: 10px;
+      border-radius: 10%; background-color: pink; 
+    }
+  </style>
+</head>
+<body>
+  <div id="demo1"></div>
+
+<script>
+  // 在加载 worklet 之前先判断下
+  if('animationWorklet' in CSS) {
+
+    async function init() {
+      await CSS.animationWorklet.addModule('my_aw.js');
+
+      new WorkletAnimation(
+        'hellworld',  // aw的名字，和注册的一样
+        new KeyframeEffect(
+          document.querySelector('#demo1'), 
+          [
+            {
+              transform: 'translateX(0)'
+            },
+            {
+              transform: 'translateX(500px)'
+            }
+          ],
+          {
+            delay: 2000,
+            duration: 5000, 
+            iterations: Number.POSITIVE_INFINITY
+          }
+        ),
+        document.timeline
+      ).play(); 
+    }
+
+    init();
+  }else{
+    console.warn('您的浏览器暂不支持 Animation Worklet');
+  }  
+</script>
+</body>
+</html>
