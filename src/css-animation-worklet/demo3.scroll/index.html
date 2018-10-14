@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>scroll-driven</title>
+  <style>
+    #demo1 {
+      width: 100px; height: 100px; margin-bottom: 10px;
+      border-radius: 10%; background-color: pink; 
+    }
+    #scroll-area {
+      width: 150px; height: 150px; border: 1px solid #eaeaea; padding: 1em; font-size: small; color: #333;
+      overflow: auto;
+      /* horizontal 方向滚动的话 */
+      /* width: 100px; white-space: nowrap; */
+    }
+  </style>
+</head>
+<body>
+  <div id="demo1"></div>
+  <div id="scroll-area">超长内容，滚我吧。<br/>超长内容，滚我吧。<br/>超长内容，滚我吧。<br/>超长内容，滚我吧。<br/>超长内容，滚我吧。<br/>超长内容，滚我吧。<br/>超长内容，滚我吧。<br/>超长内容，滚我吧。<br/>超长内容，滚我吧。<br/>超长内容，滚我吧。<br/>超长内容，滚我吧。<br/>超长内容，滚我吧。<br/>超长内容，滚我吧。<br/>超长内容，滚我吧。<br/>超长内容，滚我吧。<br/>超长内容，滚我吧。<br/>超长内容，滚我吧。<br/>超长内容，滚我吧。<br/>超长内容，滚我吧。<br/>超长内容，滚我吧。<br/>超长内容，滚我吧。<br/>超长内容，滚我吧。<br/>超长内容，滚我吧。<br/>超长内容，滚我吧。<br/>超长内容，滚我吧。<br/>超长内容，滚我吧。<br/>超长内容，滚我吧。<br/>超长内容，滚我吧。</div>
+
+<script>
+  if('animationWorklet' in CSS) {
+
+    async function init() {
+      await CSS.animationWorklet.addModule('my_aw.js');
+
+      new WorkletAnimation(
+        'scrollDriven',
+        new KeyframeEffect(
+          document.querySelector('#demo1'), 
+          [
+            {
+              transform: 'translateX(0)'
+            },
+            {
+              transform: 'translateX(300px)'
+            }
+          ],
+          {
+            duration: 3000
+          }
+        ),
+        // document.timeline,  // 不要它了
+        new ScrollTimeline({
+          scrollSource: document.querySelector('#scroll-area'), 
+          orientation: "vertical", // "horizontal" or "vertical".
+          timeRange: 3000
+        })
+      ).play(); 
+    }
+
+    init();
+  }else{
+    console.warn('您的浏览器暂不支持 Animation Worklet');
+  }  
+</script>
+</body>
+</html>
