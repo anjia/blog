@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Animation Worklet</title>
+  <style>
+    div {
+      width: 100px; height: 100px; margin-bottom: 10px;
+      border-radius: 10%; background-color: pink; 
+    }
+  </style>
+</head>
+<body>
+  <div id="demo1"></div>
+  <div id="demo2"></div>
+
+<script>
+  if('animationWorklet' in CSS) {
+
+    async function init() {
+      await CSS.animationWorklet.addModule('my_aw.js');
+
+      new WorkletAnimation(
+        'sin',
+        new KeyframeEffect(
+          document.querySelector('#demo1'), 
+          [
+            {
+              transform: 'translateX(0)'
+            },
+            {
+              transform: 'translateX(500px)'
+            }
+          ],
+          {
+            // delay: 2000,
+            duration: 5000, 
+            iterations: Number.POSITIVE_INFINITY
+          }
+        ),
+        document.timeline
+      ).play(); 
+
+      new WorkletAnimation(
+        'sin',
+        new KeyframeEffect(
+          document.querySelector('#demo2'), 
+          [
+            {
+              transform: 'translateX(0)'
+            },
+            {
+              transform: 'translateX(500px)'
+            }
+          ],
+          {
+            // delay: 2000,
+            duration: 5000, 
+            iterations: Number.POSITIVE_INFINITY
+          }
+        ),
+        document.timeline,
+        { maxOut: 5000 }  // 传参
+      ).play(); 
+    }
+
+    init();
+  }else{
+    console.warn('您的浏览器暂不支持 Animation Worklet');
+  }  
+</script>
+</body>
+</html>
