@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Layout API - Masonry（砌砖）</title>
+		<style>
+			ul > li { padding: 20px; font-size: small; background-color: #fb92a5; color: #fff; }
+			ul > li::before {
+				counter-increment: order;
+				content: counter(order);
+				font-size: 2em; margin-right: 5px; color: #000;
+			}
+
+			ul {
+				--padding: 5;
+				--columns: 3;
+
+				display: layout(masonry);
+				counter-reset: order;
+			}
+		</style>
+</head>
+<body>
+
+	<!-- 10 个高度不等 li -->
+	<ul>
+		<li>高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。</li>
+		<li>高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。</li>
+		<li>高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。</li>
+		<li>高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。</li>
+		<li>高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。</li>
+		<li>高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。</li>
+		<li>高度可变，内容自适应。</li>
+		<li>高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。</li>
+		<li>高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。高度可变，内容自适应。</li>
+		<li>高度可变，内容自适应。高度可变，内容自适应。</li>
+	</ul>
+	
+<script>
+	if ('layoutWorklet' in CSS) {
+		// 把一个 module script 添加到 layout worklet 里
+		CSS.layoutWorklet.addModule('my_layout_masonry.js');
+	}
+</script>
+</body>
+</html>
