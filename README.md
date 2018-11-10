@@ -1,7 +1,7 @@
 ## Blog
 
 - [TPAC 2018 参会总结](https://github.com/anjia/blog/issues/28)
-- [规范相关](https://github.com/anjia/blog/labels/spec)
+- [规范相关](https://github.com/anjia/blog/labels/w3c)
     - [规范](https://github.com/anjia/blog/issues/17)
     - [规范术语](https://github.com/anjia/blog/issues/18)
     - [W3C & CSS 动态](https://github.com/anjia/blog/issues/19)
