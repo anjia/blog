@@ -18,7 +18,7 @@
         - [CSS Painting API](https://github.com/anjia/blog/issues/21)
         - [CSS Houdini](https://github.com/anjia/blog/issues/23)
 - Vue 相关，[更多](https://github.com/anjia/blog/labels/Vue)
-- JS 相关，[更多](https://github.com/anjia/blog/labels/JS)
+- JS 相关，[更多](https://github.com/anjia/blog/labels/JS)
 - 网络相关，[更多](https://github.com/anjia/blog/labels/%E7%BD%91%E7%BB%9C)
 - [Quantum 相关](https://github.com/anjia/blog/labels/servo)
     - [Servo 的设计架构](https://github.com/anjia/blog/issues/3)
