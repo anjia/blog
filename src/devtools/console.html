@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>DevTools Console</title>
+</head>
+<body>
+
+<script>
+const style = 'font-size: 2em; font-bold: weight; color: green'
+
+//-------
+console.log('%c标题1. console.log()', style)
+var name = 'anjia'
+console.log('名字 ' + name)
+console.log('名字', name)
+console.log('名字 %s', name)
+/**
+  格式说明符
+    `%s` 字符串
+    `%d`/`%i` 整型
+    `%f` 浮点值
+    `%O` 可扩展 JavaScript 对象
+    `%c` CSS格式说明符
+ */
+
+
+//-------
+console.log('%c\n标题2. DOM 元素 -> JS 对象的格式', style)
+console.log(document.body)
+
+console.log('%O', document.body)
+console.dir(document.body)
+
+
+//-------
+console.log('%c\n标题3. 不同类型.可过滤', style)
+console.log('我是一条日志.log')
+console.info('我是一条日志.info')
+console.warn('我是一条日志.warn')
+console.error('我是一条日志.error')
+
+
+//-------
+console.log('%c\n标题4. 日志分组.可嵌套', style)
+console.group('用户登录')
+console.log('api 获取用户信息')
+console.log('response data ...')
+console.groupEnd()
+
+console.group('获取订单信息')
+console.log('api 根据 username 获取订单信息')
+console.log('response data ...')
+console.groupEnd()
+
+console.groupCollapsed('用户登录')
+console.log('api 获取用户信息')
+console.log('response data ...')
+console.groupEnd()
+
+console.groupCollapsed('获取订单信息')
+console.log('api 根据 username 获取订单信息')
+console.log('response data ...')
+console.groupEnd()
+
+//-------
+console.log('%c\n标题5. 执行时间', style)
+// - `console.time(sameName)`和`console.timeEnd(sameName)` 快速计时，亚ms
+console.time('Array Loop')
+for(let i=0; i<100000; i++){}
+console.timeEnd('Array Loop')
+
+
+/**
+  更多可查看：
+  https://developers.google.com/web/tools/chrome-devtools/console/console-reference
+  https://developers.google.com/web/tools/chrome-devtools/console/console-write
+*/
+</script>
+</body>
+</html>
