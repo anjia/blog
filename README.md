@@ -10,7 +10,7 @@
     - [【译】揭开 ARIA 的神秘面纱](https://github.com/anjia/blog/issues/61)
     - [ARIA 实践指南（1）](https://github.com/anjia/blog/issues/72)
 
-> [更多 A11Y ...](https://github.com/anjia/blog/issues?q=is%3Aissue+is%3Aopen+label%3Aa11y)
+> [更多 a11y ...](https://github.com/anjia/blog/issues?q=is%3Aissue+is%3Aopen+label%3Aa11y)
 
 ### CSS 规范
 - 技术文章，从规范的角度解读
