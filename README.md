@@ -1,7 +1,7 @@
 # Blog
 
 ## W3C 相关
-### A11Y 无障碍
+### A11Y
 - 基础
     - [无障碍 Web](https://github.com/anjia/blog/issues/60)：初识
     - [如何测试网站的可访问性 ](https://github.com/anjia/blog/issues/62)：测试
@@ -10,7 +10,7 @@
     - [【译】揭开 ARIA 的神秘面纱](https://github.com/anjia/blog/issues/61)
     - [ARIA 实践指南（1）](https://github.com/anjia/blog/issues/72)
 
-[更多>>](https://github.com/anjia/blog/issues?q=is%3Aissue+is%3Aopen+label%3Aa11y)
+> [更多 A11Y ...](https://github.com/anjia/blog/issues?q=is%3Aissue+is%3Aopen+label%3Aa11y)
 
 ### CSS 规范
 - 技术文章，从规范的角度解读
