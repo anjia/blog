@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+    <title>浏览器 APIs</title>
+</head>
+<body>
+    <a href="https://github.com/anjia/blog/issues/94">《浏览器 API 一览表》</a>
+<script>
+{
+    const filterArr = (arr, msg) => {
+        let length = all.length;
+        let set = new Set();
+        arr.forEach(o => set.add(o));
+        let theRest = all.filter(item => !set.has(item));
+        console.log(`${msg} 过滤了 ${length - theRest.length} 个，还剩`, theRest.length);
+        return theRest;
+    }
+
+    // Chrome 98.0.4758.80 (Official Build) (x86_64)
+    let all = Object.getOwnPropertyNames(window);
+    console.log('总数', all.length); // 1020
+
+
+    console.group('准备工作：批量过滤掉一些特征值明显的');
+    let pattern = {
+        "Node": [],
+        "Event": [],
+        "on": [],
+        "CSS": [],
+        "webkit": [],
+        "Error": [],
+    };    
+    for (let item of all) {
+        if (window[item]?.prototype instanceof Node || item === 'Node') {  // DOM 节点及子类
+            pattern['Node'].push(item);
+        } else if (window[item]?.prototype instanceof Event || item === 'Event') { // DOM Event
+            pattern['Event'].push(item);
+        } else if (/^on/.test(item)) {  // 事件属性
+            pattern['on'].push(item);
+        } else if (/^CSS/.test(item)) { // CSSOM, CSSOM View 及其它 CSS 特性
+            pattern['CSS'].push(item);
+        } else if (/webkit/i.test(item)) { // 私有前缀，先统一忽略
+            pattern['webkit'].push(item);
+        } else if (/Error/i.test(item)) {  // 错误类的，先统一忽略
+            pattern['Error'].push(item);
+        }
+    }
+    for(let item in pattern){
+        console.log(item, pattern[item].length);
+        // console.log(item, pattern[item].length, JSON.stringify(pattern[item]));
+    }
+    all = all.filter(item =>
+        !(window[item]?.prototype instanceof Node) && item != 'Node'
+        && !(window[item]?.prototype instanceof Event) && item != 'Event'
+        && !/^(on|CSS)/.test(item)
+        && !/(webkit|Error)/i.test(item)
+    );
+    console.log(`除去 ${Object.keys(pattern).join(',')} 之后还剩`, all.length); // 602
+    console.groupEnd();
+
+
+    const WindowProps = {
+        // 47个JS 固有对象      https://tc39.es/ecma262/multipage/ecmascript-data-types-and-values.html#sec-well-known-intrinsic-objects
+        // 3个BigInt           https://tc39.es/ecma262/multipage/numbers-and-dates.html#sec-bigint-objects
+        // 4个值属性+3个内存管理  https://tc39.es/ecma262/multipage/global-object.html#sec-value-properties-of-the-global-object
+        // 5个Generator        https://tc39.es/ecma262/multipage/control-abstraction-objects.html#sec-generator-objects
+        'JS_IntrinsicObjects': [
+            'globalThis', 'undefined', 'NaN', 'Infinity',  // 值属性（4个）
+            'Boolean', 'String', 'Number', 'BigInt', 'Symbol', 'Object',  // 基本对象
+            'eval', 'isFinite', 'isNaN', 'parseFloat', 'parseInt', 'decodeURI', 'encodeURI', 'encodeURIComponent', 'decodeURIComponent', // 函数属性
+            'AggregateError', 'FinalizationRegistry', 'WeakRef',  // 内存管理（3个）
+            'Array', 'Int8Array', 'Int16Array', 'Int32Array', 'Float32Array', 'Float64Array', 'Uint8Array', 'Uint16Array', 'Uint32Array', 'Uint8ClampedArray', 'BigInt64Array', 'BigUint64Array', // 索引集合
+            'ArrayBuffer', 'SharedArrayBuffer', 'DataView', // 二进制操作
+            'Map', 'Set', 'WeakMap', 'WeakSet',  // 键集合
+            'Date', 'RegExp', 'Promise', 'Proxy', 'Function', // 基础功能和数据结构
+            'Math', 'JSON', 'Reflect', 'Atomics', // 命名空间
+            'Error', 'SyntaxError', 'TypeError', 'URIError', 'EvalError', 'RangeError', 'ReferenceError',
+            'Generator', 'GeneratorFunction', 'AsyncFunction', 'AsyncGenerator', 'AsyncGeneratorFunction' // Generator（5个）
+        ],
+        // https://dom.spec.whatwg.org/
+        'DOM': [
+            'Event', 'CustomEvent', 'EventTarget', 'AbortController', 'AbortSignal', 'NonElementParentNode', 'DocumentOrShadowRoot', 'ParentNode', 'NonDocumentTypeChildNode', 'ChildNode', 'Slottable', 'NodeList', 'HTMLCollection', 'MutationObserver', 'MutationRecord', 'Node', 'Document', 'XMLDocument', 'DOMImplementation', 'DocumentType', 'DocumentFragment', 'ShadowRoot', 'Element', 'NamedNodeMap', 'Attr', 'CharacterData', 'Text', 'CDATASection', 'ProcessingInstruction', 'Comment', 'AbstractRange', 'StaticRange', 'Range', 'NodeIterator', 'TreeWalker', 'DOMTokenList', 'XPathResult', 'XPathExpression', 'XPathEvaluatorBase', 'XPathEvaluator', 'XSLTProcessor', // [data-dfn-type='interface']
+            'EventListener', 'MutationCallback', 'NodeFilter', 'XPathNSResolver', // [data-dfn-type='callback']
+            'addEventListener', 'removeEventListener', 'dispatchEvent' // [data-dfn-type='method']
+        ],
+        // https://developer.mozilla.org/en-US/docs/Web/API/CSS_Object_Model
+        'CSSOM': [
+            'MediaList', 'StyleSheet', 'CSSStyleSheet', 'StyleSheetList', 'LinkStyle', 'CSSRuleList', 'CSSRule', 'CSSStyleRule', 'CSSImportRule', 'CSSGroupingRule', 'CSSPageRule', 'CSSMarginRule', 'CSSNamespaceRule', 'CSSStyleDeclaration', 'ElementCSSInlineStyle', 'getComputedStyle'
+        ],
+        // http://www.w3.org/TR/cssom-view-1/
+        // https://www.w3.org/TR/2016/WD-cssom-view-1-20160317/#extensions-to-the-window-interface
+        'CSSOM_View': [
+            'matchMedia', 'Screen', 'MediaQueryList', 'MediaQueryListEvent', 'CaretPosition', 'GeometryUtils',
+            'moveTo', 'moveBy', 'resizeTo', 'resizeBy', // browsing context
+            'innerWidth', 'innerHeight', // viewport
+            'scrollX', 'pageXOffset', 'scrollY', 'pageYOffset', 'scroll', 'scrollTo', 'scrollBy', // viewport scrolling 
+            'screenX', 'screenLeft', 'screenY', 'screenTop', 'outerWidth', 'outerHeight', 'devicePixelRatio' // client
+        ],
+        // https://html.spec.whatwg.org/multipage/window-object.html#the-window-object
+        'HTMLSpec_Window': [
+            'window', 'self', 'document',
+            'name', 'location', 'history', 'customElements', // the current browsing context
+            'locationbar', 'menubar', ' personalbar', 'scrollbars', 'statusbar', 'toolbar', 'personalbar',
+            'status', 'close', 'closed', 'stop', 'focus', 'blur',
+            'frames', 'length', 'top', 'opener', 'parent', 'frameElement', 'open', // other browsing contexts
+            'navigator', 'clientInformation', 'originAgentCluster', // the user agent
+            'alert', 'confirm', 'prompt', 'print', 'postMessage',  // user prompts
+        ],
+        // HTML 标准中还能找到的其它接口
+        'HTMLSpec_Others': [
+            'Storage', 'WindowSessionStorage', 'WindowLocalStorage', 'StorageEvent',
+            'sessionStorage', 'localStorage',
+            'atob', 'btoa', 'createImageBitmap',
+            'crossOriginIsolated', 'isSecureContext', 'origin', 'setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'queueMicrotask', 'structuredClone', // 'For web developers (non-normative)'
+            'cancelAnimationFrame', 'requestAnimationFrame',
+            'HTMLAllCollection', 'HTMLFormControlsCollection', 'RadioNodeList', 'HTMLOptionsCollection',
+            'DOMParser', 'DOMException', 'DOMStringList', 'DOMStringMap', 'HTMLHyperlinkElementUtils',
+            'MediaError', 'AudioTrackList', 'AudioTrack', 'VideoTrackList',
+            'VideoTrack', 'TextTrackList', 'TextTrack', 'TextTrackCueList', 'TextTrackCue', 'TimeRanges', 'TrackEvent', 'ValidityState', 'SubmitEvent', 'FormDataEvent',
+            'CanvasRenderingContext2D', 'CanvasState', 'CanvasTransform', 'CanvasCompositing', 'CanvasImageSmoothing', 'CanvasFillStrokeStyles', 'CanvasShadowStyles', 'CanvasFilters', 'CanvasFilter', 'CanvasRect', 'CanvasDrawPath', 'CanvasUserInterface', 'CanvasText', 'CanvasDrawImage', 'CanvasImageData', 'CanvasPathDrawingStyles', 'CanvasTextDrawingStyles', 'CanvasPath', 'CanvasGradient', 'CanvasPattern', 'TextMetrics', 'ImageData', 'Path2D', 'ImageBitmapRenderingContext', 'OffscreenCanvas',
+            'OffscreenCanvasRenderingContext2D', 'CustomElementRegistry', 'ElementInternals', 'ElementContentEditable',
+            'DataTransfer', 'DataTransferItemList', 'DataTransferItem', 'DragEvent', 'Window', 'BarProp', 'History', 'Location',
+            'PopStateEvent', 'HashChangeEvent', 'PageTransitionEvent', 'BeforeUnloadEvent', 'ErrorEvent', 'PromiseRejectionEvent', 'GlobalEventHandlers', 'WindowEventHandlers', 'DocumentAndElementEventHandlers', 'WindowOrWorkerGlobalScope', 'DOMParser', 'Navigator', 'NavigatorID', 'NavigatorLanguage', 'NavigatorOnLine', 'NavigatorContentUtils', 'NavigatorCookies', 'ImageBitmap', 'AnimationFrameProvider', 'MessageEvent', 'EventSource', 'WebSocket', 'CloseEvent', 'MessageChannel', 'MessagePort', 'BroadcastChannel', 'WorkerGlobalScope', 'DedicatedWorkerGlobalScope', 'SharedWorkerGlobalScope', 'AbstractWorker', 'Worker', 'SharedWorker', 'NavigatorConcurrentHardware', 'WorkerNavigator', 'WorkerLocation', 'FakeWorkletGlobalScope', 'WorkletGlobalScope', 'Worklet', 'External'
+        ],
+        // https://xxx.spec.whatwg.org
+        'WHATWG_Others': [
+            'console', // https://console.spec.whatwg.org
+            'XMLHttpRequestEventTarget', 'XMLHttpRequestUpload', 'XMLHttpRequest', 'FormData', 'FormDataEntryValue', 'ProgressEvent', // https://xhr.spec.whatwg.org
+            'fetch', 'Headers', 'Body', 'Request', 'Response', // https://fetch.spec.whatwg.org/
+            'URL', 'URLSearchParams', // https://url.spec.whatwg.org
+            'NavigatorStorage', 'StorageManager',  // https://storage.spec.whatwg.org/
+            'Notification', 'NotificationEvent', // https://notifications.spec.whatwg.org/#api
+            'WritableStream', 'WritableStreamDefaultWriter', 'WritableStreamDefaultController', // https://streams.spec.whatwg.org
+            'TextDecoder', 'TextEncoder', 'TextDecoderStream', 'TextEncoderStream',  // https://encoding.spec.whatwg.org/#dom-textencoder
+            'ReadableStream', 'ReadableStreamDefaultReader', 'ReadableStreamBYOBReader', 'ReadableStreamDefaultController', 'ReadableByteStreamController', 'ReadableStreamBYOBRequest', 'WritableStream', 'WritableStreamDefaultWriter', 'WritableStreamDefaultController', 'TransformStream', 'TransformStreamDefaultController', 'ByteLengthQueuingStrategy', 'CountQueuingStrategy' // https://streams.spec.whatwg.org/#blqs-class
+        ],
+        'ECMA402': [
+            'Intl'  // 国际化, https://tc39.es/ecma402/#intl-object
+        ],
+        'W3C_Others': [
+            'FontFace', 'FontFaceSet', 'FontFaceSetLoadEvent', // W3C, CSS Font Loading 3
+            'AnimationEvent', // W3C, CSS Animations
+            'TransitionEvent', // W3C, CSS Transitions
+            'StylePropertyMap', 'StylePropertyMapReadOnly', // W3C, CSS Typed OM Level 1
+            'indexedDB', // W3C, Indexed Database API 
+            'crypto', // W3C, Web Cryptography API
+            'caches',  // W3C, Service Workers
+            'performance',  // W3C, Navigation Timing
+            'Selection',   // W3C, ED, Selection API
+            'XRSystem', 'XRSession', 'XRRenderState', 'XRFrame', 'XRSpace', 'XRReferenceSpace', 'XRBoundedReferenceSpace', 'XRView', 'XRViewport', 'XRRigidTransform', 'XRPose', 'XRViewerPose', 'XRInputSource', 'XRInputSourceArray', 'XRLayer', 'XRWebGLLayer', 'XRSessionEvent', 'XRInputSourceEvent', 'XRInputSourcesChangeEvent', 'XRReferenceSpaceEvent', 'XRPermissionStatus', // W3C, ED, WebXR Device API
+            'Touch', 'TouchList', 'TouchEvent', // W3C, CG, Touch Events
+            'NavigatorUAData', 'NavigatorUA',  // W3C, User-Agent Client Hints
+            'WakeLock', 'WakeLockSentinel', // W3C, ED, Screen Wake Lock API
+            'DocumentTimeline',  // W3C, Web Animations API 
+            'Performance', 'PerformanceEntry', 'PerformanceObserver', 'PerformanceObserverEntryList', 'Performance', 'PerformanceEntry', 'PerformanceObserver', 'PerformanceObserverEntryList', // W3C, ED, Performance Timeline
+            'PerformanceLongTaskTiming', 'TaskAttributionTiming', // W3C, ED, Long Tasks API
+            'ResizeObserver', 'ResizeObserverEntry', 'ResizeObserverSize', 'ResizeObservation', // W3C, ED, Resize Observer
+            'ReportBody', 'ReportingObserver', // W3C, ED, Reporting API
+            'PublicKeyCredential', 'PublicKeyCredential', 'Promise', 'AuthenticatorResponse', 'AuthenticatorAttestationResponse', 'AuthenticatorAssertionResponse', 'PublicKeyCredential', 'PublicKeyCredential', 'Promise', 'AuthenticatorResponse', 'AuthenticatorAttestationResponse', 'AuthenticatorAssertionResponse', // W3C, ED, Web Authentication
+            'MediaSource', 'SourceBuffer', 'SourceBufferList', // W3C, Media Source Extensions
+            'CryptoKey', 'SubtleCrypto', 'Crypto', 'crypto', // W3C, Web Cryptography API
+            'ScreenOrientation', // W3C, The Screen Orientation API 
+            'IDBRequest', 'IDBOpenDBRequest', 'IDBVersionChangeEvent', 'IDBFactory', 'IDBDatabase', 'IDBObjectStore', 'IDBIndex', 'IDBKeyRange', 'IDBCursor', 'IDBCursorWithValue', 'IDBTransaction', // W3C, WD, Indexed Database API 3.
+            'FaceDetector', 'BarcodeDetector', // W3C, CG, Accelerated Shape Detection in Images
+            'EyeDropper', // W3C, CG, 
+            'HID', 'HIDDevice', 'HIDConnectionEvent', 'HIDInputReportEvent', // W3C, CG
+            'IdleDetector',  // W3C, CG, Idle Detection API
+            'OTPCredential', // W3C, CG, WebOTP API
+            'Serial', 'SerialPort', // W3C, CG, Web Serial API
+            'OrientationSensor', 'AbsoluteOrientationSensor', 'RelativeOrientationSensor',  // W3C, Orientation Sensor
+            'Accelerometer', 'LinearAccelerationSensor', 'GravitySensor', // W3C, Accelerometer
+            'Credential', 'CredentialUserData', 'CredentialsContainer', 'PasswordCredential', 'FederatedCredential', // W3C, Credential Management Level 1
+            'DeviceOrientationEvent', 'DeviceMotionEventAcceleration', 'DeviceMotionEventRotationRate', 'DeviceMotionEvent', // W3C, DeviceOrientation Event Specification
+            'Gyroscope', // W3C, Gyroscope
+            'NavigatorLocks', 'LockManager', 'Lock', // W3C, Web Locks API
+            'Navigator', 'MediaKeySystemAccess', 'MediaKeys', 'MediaKeySession', 'MediaKeyStatusMap', 'MediaKeyMessageEvent', 'HTMLMediaElement', 'MediaEncryptedEvent', // W3C, Encrypted Media Extensions
+            'Blob', 'File', 'FileList', 'FileReader', 'FileReaderSync', // W3C, File API
+            'FileSystemHandle', 'FileSystemFileHandle', 'FileSystemDirectoryHandle', 'FileSystemWritableFileStream', // W3C, CG, File System Access
+            'CompressionStream', 'DecompressionStream', // W3C, CG, Compression Streams
+            'ClipboardEvent', 'Clipboard', 'ClipboardItem', // W3C, Clipboard API and events
+            'CookieStore', 'CookieStoreManager', 'CookieChangeEvent', 'ExtendableCookieChangeEvent', // W3C, CM, Cookie Store API
+            'Keyboard', // W3C, CG, Keyboard Lock
+            'KeyboardLayoutMap', // W3C, CG, Keyboard Map
+            'Animation', 'AnimationEffect', 'AnimationTimeline', 'KeyframeEffect', 'CompositeOperation', 'CompositeOperationOrAuto', 'Animatable', 'DocumentTimelineOptions', // W3C, ED, Web Animations
+            'AudioContext', 'AudioNode', 'AnalyserNode', 'AudioBuffer', 'AudioBufferSourceNode', 'AudioDestinationNode', 'AudioParam', 'AudioListener', 'AudioWorklet', 'AudioWorkletGlobalScope', 'AudioWorkletNode', 'AudioWorkletProcessor', 'BiquadFilterNode', 'ChannelMergerNode', 'ChannelSplitterNode', 'ConstantSourceNode', 'ConvolverNode', 'DelayNode', 'DynamicsCompressorNode', 'GainNode', 'IIRFilterNode', 'MediaElementAudioSourceNode', 'MediaStreamAudioSourceNode', 'MediaStreamTrackAudioSourceNode', 'MediaStreamAudioDestinationNode', 'PannerNode', 'PeriodicWave', 'OscillatorNode', 'StereoPannerNode', 'WaveShaperNode', 'ScriptProcessorNode',
+            'BaseAudioContext', 'AudioContext', 'OfflineAudioContext', 'OfflineAudioCompletionEvent', 'AudioBuffer', 'AudioNode', 'AudioParam', 'AudioScheduledSourceNode', 'AnalyserNode', 'AudioBufferSourceNode', 'AudioDestinationNode', 'AudioListener', 'AudioProcessingEvent', 'BiquadFilterNode', 'ChannelMergerNode', 'ChannelSplitterNode', 'ConstantSourceNode', 'ConvolverNode', 'DelayNode', 'DynamicsCompressorNode', 'GainNode', 'IIRFilterNode', 'MediaElementAudioSourceNode', 'MediaStreamAudioDestinationNode', 'MediaStreamAudioSourceNode', 'MediaStreamTrackAudioSourceNode', 'OscillatorNode', 'PannerNode', 'PeriodicWave', 'ScriptProcessorNode', 'StereoPannerNode', 'WaveShaperNode', 'AudioWorklet', 'AudioWorkletGlobalScope', 'AudioParamMap', 'AudioWorkletNode', 'AudioWorkletProcessor', // W3C, ED, Web Audio API
+            'XMLSerializer',  // W3C, ED, DOM Parsing and Serialization
+            'requestIdleCallback', 'cancelIdleCallback',  // W3C, ED, Cooperative Scheduling of Background Tasks
+            'getSelection', // W3C, ED, Selection API
+            'ServiceWorker', 'ServiceWorkerRegistration', 'ServiceWorkerContainer', 'NavigationPreloadManager', 'ServiceWorkerGlobalScope', 'Client', 'WindowClient', 'Clients', 'ExtendableEvent', 'FetchEvent', 'ExtendableMessageEvent', 'Cache', 'CacheStorage', // W3C, WG ED, Service Workers
+            'Navigator', 'Presentation', 'Presentation', 'Presentation', 'PresentationRequest', 'PresentationAvailability', 'PresentationConnectionAvailableEvent', 'PresentationConnection', 'PresentationConnectionCloseEvent', 'PresentationReceiver', 'PresentationConnectionList', 'Navigator', 'Presentation', 'Presentation', 'Presentation', 'PresentationRequest', 'PresentationAvailability', 'PresentationConnectionAvailableEvent', 'PresentationConnection', 'PresentationConnectionCloseEvent', 'PresentationReceiver', 'PresentationConnectionList', // W3C, ED, Presentation API
+            'MediaStream', 'MediaStreamTrack', 'MediaStreamTrackEvent', // W3C, ED, Media Capture and Streams
+            'PaymentRequest', 'PaymentResponse', 'PaymentMethodChangeEvent', 'PaymentRequestUpdateEvent', 'PaymentRequest', 'PaymentResponse', 'PaymentMethodChangeEvent', 'PaymentRequestUpdateEvent', // W3C, ED, Payment Request API
+            'CustomStateSet', // W3C, CG, Custom State Pseudo Class
+            'MediaMetadata', 'MediaSession',  // W3C, ED, Media Session Standard
+            'PeriodicSyncManager', 'PeriodicSyncEvent', // W3C, Web Periodic Background Synchronization
+            'PermissionStatus', 'Permissions', // W3C, ED, Permissions
+            'PictureInPictureWindow', 'PictureInPictureEvent', // W3C, ED, Picture-in-Picture
+            'PushManager', 'PushSubscriptionOptions', 'PushSubscription', 'PushMessageData', 'PushEvent', 'PushSubscriptionChangeEvent', // W3C, ED, Push API
+            'VideoPlaybackQuality', // W3C, ED, Web Speech API
+            'RemotePlayback', // W3C, ED, Remote Playback API
+            'SpeechRecognition', 'SpeechRecognitionErrorEvent', 'SpeechRecognitionAlternative', 'SpeechRecognitionResult', 'SpeechRecognitionResultList', 'SpeechRecognitionEvent', 'SpeechGrammar', 'SpeechGrammarList', 'SpeechSynthesis', 'SpeechSynthesisUtterance', 'SpeechSynthesisEvent', 'SpeechSynthesisErrorEvent', 'SpeechSynthesisVoice', // W3C, CG, Web Speech API
+            'NavigatorNetworkInformation', 'NetworkInformation', // W3C, CG, Network Information API
+            'MediaRecorder', 'BlobEvent', 'MediaRecorderErrorEvent', // W3C, MediaStream Recording
+            'MediaCapabilities', // W3C, Media Capabilities
+            'Sensor', 'SensorErrorEvent', // W3C, Generic Sensor API
+            'AudioDecoder', 'VideoDecoder', 'AudioEncoder', 'VideoEncoder', 'EncodedAudioChunk', 'EncodedVideoChunk', 'AudioData', 'VideoFrame', 'VideoColorSpace', 'ImageDecoder', 'ImageTrackList', 'ImageTrack', // W3C, WebCodecs
+            'LayoutShift', 'LayoutShiftAttribution', // W3C, CM, Layout Instability API
+            'LargestContentfulPaint', // W3C, CM, Largest Contentful Paint
+            'IntersectionObserver', 'IntersectionObserverEntry', // W3C, Intersection Observer
+            'TrustedHTML', 'TrustedScript', 'TrustedScriptURL', 'TrustedTypePolicy', 'TrustedTypePolicyFactory', // W3C, ED, Trusted Types
+            'ImageCapture', // W3C, MediaStream Image Capture
+            'IdleDeadline', // W3C, Cooperative Scheduling of Background Tasks
+            'Geolocation', 'GeolocationPosition', 'GeolocationCoordinates', 'GeolocationPositionError', // W3C, Geolocation API
+            'XRAnchor', 'XRAnchorSet',  // W3C, WebXR Anchors Module
+            'XRDepthInformation', 'XRCPUDepthInformation', 'XRWebGLDepthInformation', // W3C, WebXR Depth Sensing Module
+            'Gamepad', 'GamepadButton', 'GamepadEvent', // W3C, ED, Gamepad
+            'GamepadHapticActuator', 'GamepadPose', 'GamepadTouch', 'Gamepad', // W3C, Gamepad Extensions
+            'RTCPeerConnection', 'RTCSessionDescription', 'RTCIceCandidate', 'RTCPeerConnectionIceEvent', 'RTCPeerConnectionIceErrorEvent', 'RTCPeerConnection', 'RTCCertificate', 'RTCPeerConnection', 'RTCRtpSender', 'RTCRtpReceiver', 'RTCRtpTransceiver', 'RTCDtlsTransport', 'RTCIceTransport', 'RTCTrackEvent', 'RTCPeerConnection', 'RTCSctpTransport', 'RTCDataChannel', 'RTCDataChannelEvent', 'RTCRtpSender', 'RTCDTMFSender', 'RTCDTMFToneChangeEvent', 'RTCPeerConnection', 'RTCStatsReport', 'RTCError', 'RTCErrorEvent', // W3C, ED, WebRTC 1.0
+            'MediaStream', 'MediaStreamTrack', 'MediaStreamTrackEvent', 'OverconstrainedError', 'Navigator', 'MediaDevices', 'MediaDeviceInfo', 'InputDeviceInfo', 'ConstrainablePattern', // W3C, Media Capture and Streams
+            'HTMLMediaElement', 'HTMLCanvasElement', 'CanvasCaptureMediaStreamTrack', // W3C, Media Capture from DOM Elements
+            'Performance', // High Resolution Time API, the Performance Timeline API, the Navigation Timing API, the User Timing API, and the Resource Timing API.
+            'PerformanceServerTiming', 'PerformanceResourceTiming', // W3C, ED, Server Timing
+            'PerformancePaintTiming', // Paint Timing 1
+            'PerformanceNavigationTiming', // Navigation Timing Level 2
+            'PerformanceMark', 'PerformanceMeasure', // User Timing Level 3
+            'PerformanceEventTiming', 'EventCounts', 'InteractionCounts',// CG, Event Timing API 
+            'PerformanceElementTiming', // CG, Element Timing API
+            'visualViewport', // W3C, CG, Visual Viewport API
+            'speechSynthesis', // W3C, CG, Web Speech API
+            'VisualViewport', 'VTTCue', // W3C, CG
+            'cookieStore', // W3C, CG
+            'URLPattern', // W3C, CG, URLPattern API
+            'FileSystemEntry', 'FileSystemDirectoryEntry', 'FileSystemDirectoryReader', 'FileSystemFileEntry', 'FileSystem', // W3C, CM, File and Directory Entries API
+            'showDirectoryPicker', 'showOpenFilePicker', 'showSaveFilePicker', // W3C, CM, File System Access
+            'Bluetooth', 'BluetoothPermissionResult', 'ValueEvent', 'BluetoothDevice', 'BluetoothAdvertisingEvent', 'BluetoothRemoteGATTServer', 'BluetoothRemoteGATTService', 'BluetoothRemoteGATTCharacteristic', 'BluetoothCharacteristicProperties', 'BluetoothRemoteGATTDescriptor', 'CharacteristicEventHandlers', 'BluetoothDeviceEventHandlers', 'ServiceEventHandlers', 'BluetoothUUID', // W3C, CM, Web Bluetooth
+            'USB', 'USBConnectionEvent', 'USBDevice', 'USBInTransferResult', 'USBOutTransferResult', 'USBIsochronousInTransferPacket', 'USBIsochronousInTransferResult', 'USBIsochronousOutTransferPacket', 'USBIsochronousOutTransferResult', 'USBConfiguration', 'USBInterface', 'USBAlternateInterface', 'USBEndpoint', 'USBPermissionResult', // W3C, CM, WebUSB API
+            'BackgroundFetchManager', 'BackgroundFetchRegistration', 'BackgroundFetchRecord', 'BackgroundFetchEvent', 'BackgroundFetchUpdateUIEvent', // W3C, CM, Background Fetch
+            'SyncManager', // W3C, CG, Web Background Synchronization
+            'SFrameTransform', 'SFrameTransformErrorEvent', 'RTCEncodedVideoFrame', 'RTCEncodedAudioFrame', 'RTCTransformEvent', 'RTCRtpScriptTransformer', 'RTCRtpScriptTransform', // W3C,WebRTC Encoded Transform
+            'PermissionsPolicy', 'PermissionsPolicyViolationReportBody',  // W3C, Permissions Policy
+            'NavigatorManagedData', // W3C, CG, Managed Configuration API
+            'WebTransport', 'WebTransportBidirectionalStream', 'WebTransportDatagramDuplexStream', // W3C, WebTransport
+            'PaymentInstruments', 'PaymentManager', 'PaymentRequestEvent', 'CanMakePaymentEvent', // W3C, Payment Handler API
+            'DOMRectList', 'DOMRect', 'DOMQuad', 'DOMRectReadOnly', 'DOMPointReadOnly', 'DOMPoint', 'DOMMatrixReadOnly', 'DOMMatrix' // W3C, Geometry Interfaces Module Level 1
+        ],
+        'Other_Orgs': [
+            'WebAssembly',  // https://webassembly.github.io/spec/js-api/#webassembly-namespace
+            'InputDeviceCapabilities', //  https://wicg.github.io/input-device-capabilities
+            'XRCompositionLayer', 'XRProjectionLayer', 'XRQuadLayer', 'XRCylinderLayer', 'XREquirectLayer', 'XRCubeLayer', 'XRSubImage', 'XRWebGLSubImage', 'XRWebGLBinding', 'XRMediaBinding', 'XRLayerEvent', // https://immersive-web.github.io/layers/
+            'XRLightEstimate', 'XRLightProbe',  // https://immersive-web.github.io/lighting-estimation/
+            'XRHitTestSource', 'XRTransientInputHitTestSource', 'XRHitTestResult', 'XRTransientInputHitTestResult', 'XRRay', // https://immersive-web.github.io/hit-test/, WebXR Hit Test Module
+            'SVGElement', 'SVGBoundingBoxOptions', 'SVGGraphicsElement', 'SVGGeometryElement', 'SVGNumber', 'SVGLength', 'SVGAngle', 'SVGNumberList', 'SVGLengthList', 'SVGStringList', 'SVGAnimatedBoolean', 'SVGAnimatedEnumeration', 'SVGAnimatedInteger', 'SVGAnimatedNumber', 'SVGAnimatedLength', 'SVGAnimatedAngle', 'SVGAnimatedString', 'SVGAnimatedRect', 'SVGAnimatedNumberList', 'SVGAnimatedLengthList', 'SVGUnitTypes', 'SVGTests', 'SVGFitToViewBox', 'SVGURIReference', // https://svgwg.org/svg2-draft/types.html
+            'SVGTransform', 'SVGTransformList', 'SVGAnimatedTransformList', 'SVGPreserveAspectRatio', 'SVGAnimatedPreserveAspectRatio', // https://svgwg.org/svg2-draft/coords.html
+            'SVGRectElement', 'SVGCircleElement', 'SVGEllipseElement', 'SVGLineElement', 'SVGAnimatedPoints', 'SVGPointList', 'SVGPolylineElement', 'SVGPolygonElement', // https://svgwg.org/svg2-draft/shapes.html
+            'MIDIInputMap', 'MIDIOutputMap', 'MIDIAccess', 'MIDIPort', 'MIDIInput', 'MIDIOutput', 'MIDIMessageEvent', 'MIDIConnectionEvent', // Web MIDI API, https://webaudio.github.io/web-midi-api/#midiaccess-interface
+            'WebGLQuery', 'WebGLSampler', 'WebGLSync', 'WebGLTransformFeedback', 'WebGLVertexArrayObject', 'WebGL2RenderingContextBase', 'WebGL2RenderingContextOverloads', 'WebGL2RenderingContext', 'WebGLObject', 'WebGLBuffer', 'WebGLFramebuffer', 'WebGLProgram', 'WebGLRenderbuffer', 'WebGLShader', 'WebGLTexture', 'WebGLUniformLocation', 'WebGLActiveInfo', 'WebGLShaderPrecisionFormat', 'WebGLRenderingContextBase', 'WebGLRenderingContext', 'WebGLContextEvent' // WebGL
+        ]
+    };
+    console.group('依次过滤：');
+    for (let item in WindowProps) {
+        all = filterArr(WindowProps[item], item);
+    }
+    console.groupEnd(); // 41
+
+
+    // ====================================
+    console.group('其它杂项：');
+    const Others = {
+        // 已废弃/过时的
+        'Deprecated_Interfaces': [
+            'escape', 'unescape', 'uneval',  // global functions
+            'PerformanceTiming', 'PerformanceNavigation',
+            'PluginArray', 'Plugin',
+            'BatteryManager', 'PaymentAddress',
+            'MimeTypeArray', 'MimeType',
+            'event', 'messageManager', 'scrollMaxX', 'scrollMaxY', 'sidebar', 'external',
+            'applicationCache', 'ApplicationCache',
+            'content', '_content', 'defaultStatus', 'dialogArguments', 'mozPaintCount', 'orientation', 'returnValue',
+            'back', 'captureEvents', 'forward', 'home', 'openDialog', 'releaseEvents', 'showModalDialog',
+            'XPathExpression',
+            'SVGPoint',
+            'SVGRect', //  DOMRect, LegacyWindowAlias=SVGRect
+            'SVGMatrix', // DOMMatrix, LegacyWindowAlias=(SVGMatrix, WebKitCSSMatrix)]
+            'DOMError', 'DOMConfiguration', 'DOMErrorHandler', 'DOMImplementationList', 'DOMImplementationRegistry', 'DOMImplementationSource', 'DOMLocator', 'DOMObject', 'DOMSettableTokenList', 'DOMUserData', 'ElementTraversal', 'Entity', 'EntityReference', 'NameList', 'Notation', 'TypeInfo', 'UserDataHandler' // DOM API
+        ],
+        // 非标准的
+        'Not_Found_Spec': [
+            'styleMedia', 'chrome', 'offscreenBuffering', 'defaultstatus', 'FragmentDirective', 'Profiler',
+            'screen', // 即 CSSOM View 里的 Screen
+            'trustedTypes', // 即标准里的 TrustedTypePolicyFactory
+            'UserActivation', // https://developers.google.com/web/updates/2019/01/user-activation        
+            'XRDOMOverlayState', // 还在开发中的接口，https://www.w3.org/TR/webxr-dom-overlays-1/
+            'FeaturePolicy', // https://developer.mozilla.org/en-US/docs/Web/API/FeaturePolicy
+            'MediaStreamTrackGenerator', 'MediaStreamTrackProcessor', // https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamTrackProcessor
+            'Scheduling', 'scheduler', 'Scheduler','TaskController', 'TaskSignal', // 和工作/任务/进程调度有关
+            'Ink',  'DelegatedInkTrailPresenter',
+            'VirtualKeyboard', 'openDatabase',
+            'find', 'fullScreen'
+        ]
+    };
+    for (let item in Others) {
+        all = filterArr(Others[item], item);
+    }
+    console.groupEnd();
+
+    console.log(all); // 0
+    // console.log(JSON.stringify(all));
+}
+</script>
+</body>
+</html>
